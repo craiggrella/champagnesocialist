@@ -1,4 +1,5 @@
 require('dotenv').config();
+const path = require('path');
 const express = require('express');
 const cors = require('cors');
 const { transformText, synthesizeSpeech } = require('./lib/groq');
@@ -7,7 +8,9 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static('public'));
+// Absolute path so static files resolve regardless of the process CWD
+// (relative 'public' breaks on Vercel's serverless runtime).
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.post('/api/transform', async (req, res) => {
   try {
@@ -28,7 +31,19 @@ app.post('/api/speak', async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+// Explicit root route so "/" always serves the page, even if static middleware
+// ordering changes.
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
+
+const PORT = process.env.PORT || 3000;
+
+// Only listen when run directly (local dev). On Vercel the app is imported.
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+  });
+}
+
+module.exports = app;
