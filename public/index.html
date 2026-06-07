@@ -21,7 +21,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 24px;
+      padding: 110px 24px 60px;
       position: relative;
       /* Fallback gradient shows if hero.jpg isn't present yet */
       background:
@@ -51,6 +51,23 @@
       background: linear-gradient(135deg, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.55) 100%);
     }
 
+    .page-title {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      text-align: center;
+      padding: 20px 16px;
+      font-size: 30px;
+      color: #fff;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+      letter-spacing: 0.5px;
+      z-index: 10;
+    }
+
     .stack {
       width: 100%;
       max-width: 560px;
@@ -75,15 +92,6 @@
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
       padding: 32px;
       width: 100%;
-    }
-
-    .brand {
-      color: #fff;
-      margin-bottom: 24px;
-      font-size: 18px;
-      letter-spacing: 0.5px;
-      text-align: center;
-      opacity: 0.9;
     }
 
     label {
@@ -232,9 +240,11 @@
     }
 
     @media (max-width: 480px) {
+      .page-title { font-size: 21px; padding: 16px 12px; }
       .headline { font-size: 21px; }
       .container { padding: 24px; }
       .disclaimer { font-size: 11px; }
+      body { padding-top: 90px; }
     }
   </style>
 </head>
@@ -242,14 +252,13 @@
   <div class="hero"></div>
   <div class="scrim"></div>
 
+  <h1 class="page-title">🥂 Champagne Socialist Translator</h1>
+
   <div class="stack">
-    <h1 class="headline">Type something and let a champagne socialist tell you how they'd say it.</h1>
+    <p class="headline">Type something and let a champagne socialist tell you how they'd say it.</p>
 
     <div class="container">
-      <div class="brand">🥂 Champagne Socialist Translator</div>
-
       <div class="input-group">
-        <label for="input-text">Say something:</label>
         <textarea
           id="input-text"
           placeholder="Type something here... (max 500 characters)"
