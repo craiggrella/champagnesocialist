@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Champagne Socialist Translator</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      min-height: 100vh;
+    }
+
+    body {
+      font-family: 'Georgia', serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+      position: relative;
+      /* Fallback gradient shows if hero.jpg isn't present yet */
+      background:
+        linear-gradient(135deg, rgba(20,16,28,0.55), rgba(40,20,30,0.55)),
+        linear-gradient(135deg, #3a2e44 0%, #6b2c3e 100%);
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+    }
+
+    /* Full-page hero photo. Drop your image at public/hero.jpg */
+    .hero {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background-image: url('hero.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    /* Dark scrim so the glass box stays readable over any photo */
+    .scrim {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background: linear-gradient(135deg, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.55) 100%);
+    }
+
+    .stack {
+      width: 100%;
+      max-width: 560px;
+    }
+
+    .headline {
+      color: #fff;
+      text-align: center;
+      font-size: 26px;
+      line-height: 1.3;
+      margin-bottom: 22px;
+      text-shadow: 0 2px 12px rgba(0,0,0,0.6);
+      font-style: italic;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.14);
+      backdrop-filter: blur(14px) saturate(120%);
+      -webkit-backdrop-filter: blur(14px) saturate(120%);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+      padding: 32px;
+      width: 100%;
+    }
+
+    .brand {
+      color: #fff;
+      margin-bottom: 24px;
+      font-size: 18px;
+      letter-spacing: 0.5px;
+      text-align: center;
+      opacity: 0.9;
+    }
+
+    label {
+      display: block;
+      color: #fff;
+      margin-bottom: 8px;
+      font-weight: 600;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+    }
+
+    textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid rgba(255,255,255,0.4);
+      border-radius: 8px;
+      font-family: 'Georgia', serif;
+      font-size: 15px;
+      resize: vertical;
+      min-height: 110px;
+      background: rgba(255,255,255,0.9);
+      color: #2c1f2b;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: #f5d76e;
+      box-shadow: 0 0 0 3px rgba(245, 215, 110, 0.4);
+    }
+
+    .char-count {
+      font-size: 12px;
+      color: rgba(255,255,255,0.75);
+      margin-top: 6px;
+      text-align: right;
+    }
+
+    .char-count.warning {
+      color: #ffb3a7;
+    }
+
+    button {
+      background: linear-gradient(135deg, #c9a24b 0%, #9c7a2e 100%);
+      color: #fff;
+      padding: 14px 30px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.1s, filter 0.3s;
+      width: 100%;
+      margin-top: 18px;
+      letter-spacing: 0.3px;
+    }
+
+    button:hover {
+      filter: brightness(1.08);
+    }
+
+    button:active {
+      transform: translateY(1px);
+    }
+
+    button:disabled {
+      background: rgba(255,255,255,0.25);
+      color: rgba(255,255,255,0.6);
+      cursor: not-allowed;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      color: rgba(255,255,255,0.9);
+      margin: 18px 0 0;
+      font-style: italic;
+    }
+
+    .result-group {
+      display: none;
+      margin-top: 26px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(255,255,255,0.25);
+    }
+
+    .result-group.show {
+      display: block;
+    }
+
+    .result-label {
+      color: #fff;
+      font-weight: 600;
+      margin-bottom: 10px;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+    }
+
+    .result-text {
+      background: rgba(255,255,255,0.92);
+      padding: 16px;
+      border-radius: 8px;
+      color: #2c1f2b;
+      line-height: 1.6;
+      margin-bottom: 15px;
+      font-style: italic;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    .button-group button {
+      flex: 1;
+      padding: 11px;
+      font-size: 14px;
+      margin-top: 0;
+    }
+
+    .error {
+      color: #fff;
+      margin-top: 14px;
+      padding: 12px;
+      background: rgba(192, 57, 43, 0.85);
+      border-radius: 8px;
+      display: none;
+    }
+
+    .error.show {
+      display: block;
+    }
+
+    @media (max-width: 480px) {
+      .headline { font-size: 21px; }
+      .container { padding: 24px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="hero"></div>
+  <div class="scrim"></div>
+
+  <div class="stack">
+    <h1 class="headline">Type something and let a champagne socialist tell you how they'd say it.</h1>
+
+    <div class="container">
+      <div class="brand">🥂 Champagne Socialist Translator</div>
+
+      <div class="input-group">
+        <label for="input-text">Say something:</label>
+        <textarea
+          id="input-text"
+          placeholder="Type something here... (max 500 characters)"
+          maxlength="500"
+        ></textarea>
+        <div class="char-count"><span id="char-count">0</span>/500</div>
+      </div>
+
+      <button id="submit-btn">Well, we're waiting...</button>
+      <div class="loading" id="loading">Decanting your words into something more... sophisticated...</div>
+      <div class="error" id="error"></div>
+
+      <div class="result-group" id="result-group">
+        <div class="result-label">How a champagne socialist would say it:</div>
+        <div class="result-text" id="result-text"></div>
+        <div class="button-group">
+          <button id="read-btn">🔊 Read Aloud</button>
+          <button id="copy-btn">📋 Copy</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const inputText = document.getElementById('input-text');
+    const submitBtn = document.getElementById('submit-btn');
+    const loadingDiv = document.getElementById('loading');
+    const errorDiv = document.getElementById('error');
+    const resultGroup = document.getElementById('result-group');
+    const resultText = document.getElementById('result-text');
+    const charCount = document.getElementById('char-count');
+    const readBtn = document.getElementById('read-btn');
+    const copyBtn = document.getElementById('copy-btn');
+
+    inputText.addEventListener('input', () => {
+      charCount.textContent = inputText.value.length;
+      const charCountEl = document.querySelector('.char-count');
+      if (inputText.value.length > 450) {
+        charCountEl.classList.add('warning');
+      } else {
+        charCountEl.classList.remove('warning');
+      }
+    });
+
+    submitBtn.addEventListener('click', async () => {
+      const text = inputText.value.trim();
+
+      if (!text) {
+        showError('Please enter some text');
+        return;
+      }
+
+      if (text.length > 500) {
+        showError('Text exceeds 500 character limit');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      loadingDiv.style.display = 'block';
+      errorDiv.classList.remove('show');
+
+      try {
+        const response = await fetch('/api/transform', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ text })
+        });
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.error || 'Failed to transform text');
+        }
+
+        const data = await response.json();
+        resultText.textContent = data.transformed;
+        resultGroup.classList.add('show');
+      } catch (error) {
+        showError(error.message);
+      } finally {
+        submitBtn.disabled = false;
+        loadingDiv.style.display = 'none';
+      }
+    });
+
+    let currentAudio = null;
+
+    function speakWithBrowser(text) {
+      if (!('speechSynthesis' in window)) {
+        showError('Text-to-speech not supported in your browser');
+        return;
+      }
+      speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 0.95;
+      // Prefer a natural-sounding female English voice if one exists.
+      const voices = speechSynthesis.getVoices();
+      const preferred = voices.find(v => /female|samantha|aria|jenny|google us english|zira/i.test(v.name) && /en/i.test(v.lang))
+        || voices.find(v => /en/i.test(v.lang));
+      if (preferred) utterance.voice = preferred;
+      speechSynthesis.speak(utterance);
+    }
+
+    readBtn.addEventListener('click', async () => {
+      const text = resultText.textContent;
+      if (!text) return;
+
+      // Stop anything already playing.
+      if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+      if ('speechSynthesis' in window) speechSynthesis.cancel();
+
+      const originalLabel = readBtn.textContent;
+      readBtn.disabled = true;
+      readBtn.textContent = '🎙️ Loading voice...';
+
+      try {
+        const response = await fetch('/api/speak', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text })
+        });
+
+        if (!response.ok) throw new Error('voice unavailable');
+
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const audio = new Audio(url);
+        currentAudio = audio;
+        audio.onended = () => URL.revokeObjectURL(url);
+        await audio.play();
+      } catch (err) {
+        // Fall back to the browser's built-in voice so it always speaks.
+        speakWithBrowser(text);
+      } finally {
+        readBtn.disabled = false;
+        readBtn.textContent = originalLabel;
+      }
+    });
+
+    copyBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(resultText.textContent);
+      copyBtn.textContent = '✓ Copied!';
+      setTimeout(() => {
+        copyBtn.textContent = '📋 Copy';
+      }, 2000);
+    });
+
+    function showError(message) {
+      errorDiv.textContent = message;
+      errorDiv.classList.add('show');
+    }
+
+    inputText.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter' && e.ctrlKey) {
+        submitBtn.click();
+      }
+    });
+  </script>
+</body>
+</html>
