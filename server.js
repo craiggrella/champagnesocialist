@@ -2,7 +2,7 @@ require('dotenv').config();
 const path = require('path');
 const express = require('express');
 const cors = require('cors');
-const { transformText } = require('./lib/groq');
+const { transformText, storeStatus } = require('./lib/groq');
 
 const app = express();
 
@@ -18,6 +18,16 @@ app.post('/api/transform', async (req, res) => {
     res.json({ transformed });
   } catch (error) {
     res.status(error.status || 500).json({ error: error.message || 'Failed to transform text' });
+  }
+});
+
+// Health check — reports which recent-response store is active (redis vs the
+// in-memory fallback) and how many items it holds. Exposes no secrets.
+app.get('/healthz', async (req, res) => {
+  try {
+    res.json({ ok: true, ...(await storeStatus()) });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: e.message });
   }
 });
 
