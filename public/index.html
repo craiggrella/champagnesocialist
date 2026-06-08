@@ -246,6 +246,18 @@
       color: var(--muted);
     }
 
+    .disclaimer a {
+      color: var(--gold-dark);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(160, 127, 46, 0.4);
+      transition: color 0.2s, border-color 0.2s;
+    }
+
+    .disclaimer a:hover {
+      color: var(--gold);
+      border-color: var(--gold);
+    }
+
     /* ── Mobile / portrait: stack — logo + saying on top, input below ── */
     @media (max-width: 820px), (orientation: portrait) {
       .layout {
@@ -287,7 +299,7 @@
     </section>
   </main>
 
-  <footer class="disclaimer">© 2026 The Champagne Socialist. Eat the rich — responsibly sourced, ethically plated.</footer>
+  <footer class="disclaimer">© 2026 The Champagne Socialist. Eat the rich — responsibly sourced, ethically plated, and beautifully served up by our friends at <a href="https://groq.com" target="_blank" rel="noopener">Groq</a>.</footer>
 
   <script>
     const inputText = document.getElementById('input-text');
