@@ -115,11 +115,6 @@
       margin: 0 auto;
     }
 
-    .brand-accent {
-      width: clamp(140px, 28vw, 175px);
-      margin: clamp(20px, 3vw, 26px) auto 0;
-    }
-
     /* ── Input / result panel ──────────────────────── */
     .panel {
       background: var(--card);
@@ -257,8 +252,6 @@
         grid-template-columns: 1fr;
       }
       .brand-tagline { max-width: 38ch; }
-      /* Hide the decorative "tax the rich" sign on narrow stacked layouts. */
-      .brand-accent { display: none; }
     }
   </style>
 </head>
@@ -269,7 +262,6 @@
       <h1 class="brand-title">the champagne socialist</h1>
       <div class="brand-rule"></div>
       <p class="brand-tagline">type a take — get it back the way a champagne socialist would say it: heartfelt, righteous, and blissfully unaware of the irony.</p>
-      <img class="brand-accent" src="/assets/crop.svg" alt="Tax the rich">
     </section>
 
     <section class="panel">
