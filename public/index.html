@@ -3,7 +3,34 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Champagne Socialist Translator</title>
+  <title>The Champagne Socialist</title>
+  <meta name="description" content="Type a take — get it back the way a champagne socialist would say it: heartfelt, righteous, and blissfully unaware of the irony.">
+  <meta name="theme-color" content="#c9a24b">
+
+  <!-- Favicons / app icons -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+
+  <!-- Open Graph (Facebook, LinkedIn, iMessage, etc.) -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="The Champagne Socialist">
+  <meta property="og:url" content="https://champagnesocialistsays.com/">
+  <meta property="og:title" content="The Champagne Socialist">
+  <meta property="og:description" content="Type a take — get it back the way a champagne socialist would say it: heartfelt, righteous, and blissfully unaware of the irony.">
+  <meta property="og:image" content="https://champagnesocialistsays.com/assets/og-card.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="The Champagne Socialist — type a take, get it back the way a champagne socialist would say it.">
+
+  <!-- Twitter / X -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="The Champagne Socialist">
+  <meta name="twitter:description" content="Type a take — get it back the way a champagne socialist would say it: heartfelt, righteous, and blissfully unaware of the irony.">
+  <meta name="twitter:image" content="https://champagnesocialistsays.com/assets/og-card.png">
+
   <style>
     * {
       margin: 0;
@@ -56,8 +83,11 @@
       top: 0;
       left: 0;
       right: 0;
-      text-align: center;
-      padding: 20px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 14px 16px;
       font-size: 30px;
       color: #fff;
       background: rgba(0, 0, 0, 0.4);
@@ -66,6 +96,13 @@
       text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
       letter-spacing: 0.5px;
       z-index: 10;
+    }
+
+    .page-title img {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      flex-shrink: 0;
     }
 
     .stack {
@@ -240,7 +277,8 @@
     }
 
     @media (max-width: 480px) {
-      .page-title { font-size: 21px; padding: 16px 12px; }
+      .page-title { font-size: 21px; padding: 12px; gap: 9px; }
+      .page-title img { width: 34px; height: 34px; }
       .headline { font-size: 21px; }
       .container { padding: 24px; }
       .disclaimer { font-size: 11px; }
@@ -252,7 +290,7 @@
   <div class="hero"></div>
   <div class="scrim"></div>
 
-  <h1 class="page-title">🥂 Champagne Socialist Translator</h1>
+  <h1 class="page-title"><img src="/assets/avatar.svg" alt="Champagne Socialist avatar">Champagne Socialist Translator</h1>
 
   <div class="stack">
     <div class="container">
