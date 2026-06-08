@@ -275,7 +275,6 @@
         <div class="result-label">How a champagne socialist would say it:</div>
         <div class="result-text" id="result-text"></div>
         <div class="button-group">
-          <button id="read-btn">🔊 Read Aloud</button>
           <button id="copy-btn">📋 Copy</button>
         </div>
       </div>
@@ -292,7 +291,6 @@
     const resultGroup = document.getElementById('result-group');
     const resultText = document.getElementById('result-text');
     const charCount = document.getElementById('char-count');
-    const readBtn = document.getElementById('read-btn');
     const copyBtn = document.getElementById('copy-btn');
 
     inputText.addEventListener('input', () => {
@@ -344,60 +342,6 @@
       } finally {
         submitBtn.disabled = false;
         loadingDiv.style.display = 'none';
-      }
-    });
-
-    let currentAudio = null;
-
-    function speakWithBrowser(text) {
-      if (!('speechSynthesis' in window)) {
-        showError('Text-to-speech not supported in your browser');
-        return;
-      }
-      speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = 0.95;
-      // Prefer a natural-sounding female English voice if one exists.
-      const voices = speechSynthesis.getVoices();
-      const preferred = voices.find(v => /female|samantha|aria|jenny|google us english|zira/i.test(v.name) && /en/i.test(v.lang))
-        || voices.find(v => /en/i.test(v.lang));
-      if (preferred) utterance.voice = preferred;
-      speechSynthesis.speak(utterance);
-    }
-
-    readBtn.addEventListener('click', async () => {
-      const text = resultText.textContent;
-      if (!text) return;
-
-      // Stop anything already playing.
-      if (currentAudio) { currentAudio.pause(); currentAudio = null; }
-      if ('speechSynthesis' in window) speechSynthesis.cancel();
-
-      const originalLabel = readBtn.textContent;
-      readBtn.disabled = true;
-      readBtn.textContent = '🎙️ Loading voice...';
-
-      try {
-        const response = await fetch('/api/speak', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ text })
-        });
-
-        if (!response.ok) throw new Error('voice unavailable');
-
-        const blob = await response.blob();
-        const url = URL.createObjectURL(blob);
-        const audio = new Audio(url);
-        currentAudio = audio;
-        audio.onended = () => URL.revokeObjectURL(url);
-        await audio.play();
-      } catch (err) {
-        // Fall back to the browser's built-in voice so it always speaks.
-        speakWithBrowser(text);
-      } finally {
-        readBtn.disabled = false;
-        readBtn.textContent = originalLabel;
       }
     });
 

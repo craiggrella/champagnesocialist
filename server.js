@@ -2,7 +2,7 @@ require('dotenv').config();
 const path = require('path');
 const express = require('express');
 const cors = require('cors');
-const { transformText, synthesizeSpeech } = require('./lib/groq');
+const { transformText } = require('./lib/groq');
 
 const app = express();
 
@@ -18,16 +18,6 @@ app.post('/api/transform', async (req, res) => {
     res.json({ transformed });
   } catch (error) {
     res.status(error.status || 500).json({ error: error.message || 'Failed to transform text' });
-  }
-});
-
-app.post('/api/speak', async (req, res) => {
-  try {
-    const audio = await synthesizeSpeech(req.body?.text);
-    res.set('Content-Type', 'audio/wav');
-    res.send(audio);
-  } catch (error) {
-    res.status(error.status || 500).json({ error: error.message || 'Failed to generate speech' });
   }
 });
 
