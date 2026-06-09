@@ -23,7 +23,7 @@ app.post('/api/transform', async (req, res) => {
 
 // Streaming endpoint for the /stream test page. Streams plain-text deltas as
 // they arrive so the client can render a typewriter effect. Additive/throwaway.
-app.post('/api/transform-stream', async (req, res) => {
+app.post('/transform-stream', async (req, res) => {
   try {
     res.setHeader('Content-Type', 'text/plain; charset=utf-8');
     res.setHeader('Cache-Control', 'no-cache, no-transform');
