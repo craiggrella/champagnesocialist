@@ -2,7 +2,7 @@ require('dotenv').config();
 const path = require('path');
 const express = require('express');
 const cors = require('cors');
-const { transformText, transformTextStream, storeStatus } = require('./lib/groq');
+const { transformTextStream, storeStatus } = require('./lib/groq');
 
 const app = express();
 
@@ -12,17 +12,8 @@ app.use(express.json());
 // (relative 'public' breaks on Vercel's serverless runtime).
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.post('/api/transform', async (req, res) => {
-  try {
-    const transformed = await transformText(req.body?.text);
-    res.json({ transformed });
-  } catch (error) {
-    res.status(error.status || 500).json({ error: error.message || 'Failed to transform text' });
-  }
-});
-
-// Streaming endpoint for the /stream test page. Streams plain-text deltas as
-// they arrive so the client can render a typewriter effect. Additive/throwaway.
+// Streaming endpoint: streams plain-text deltas as they arrive so the client
+// can render the response with a typewriter effect.
 app.post('/transform-stream', async (req, res) => {
   try {
     res.setHeader('Content-Type', 'text/plain; charset=utf-8');
