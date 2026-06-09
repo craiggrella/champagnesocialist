@@ -2,7 +2,7 @@ require('dotenv').config();
 const path = require('path');
 const express = require('express');
 const cors = require('cors');
-const { transformText, storeStatus } = require('./lib/groq');
+const { transformText, transformTextStream, storeStatus } = require('./lib/groq');
 
 const app = express();
 
@@ -18,6 +18,24 @@ app.post('/api/transform', async (req, res) => {
     res.json({ transformed });
   } catch (error) {
     res.status(error.status || 500).json({ error: error.message || 'Failed to transform text' });
+  }
+});
+
+// Streaming endpoint for the /stream test page. Streams plain-text deltas as
+// they arrive so the client can render a typewriter effect. Additive/throwaway.
+app.post('/api/transform-stream', async (req, res) => {
+  try {
+    res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+    res.setHeader('Cache-Control', 'no-cache, no-transform');
+    res.setHeader('X-Accel-Buffering', 'no');
+    await transformTextStream(req.body?.text, (delta) => res.write(delta));
+    res.end();
+  } catch (error) {
+    if (!res.headersSent) {
+      res.status(error.status || 500).json({ error: error.message || 'Failed to transform text' });
+    } else {
+      res.end();
+    }
   }
 });
 
