@@ -222,7 +222,21 @@
       line-height: 1.6;
       margin-bottom: 15px;
       font-style: italic;
+      min-height: 1.6em;
     }
+
+    /* Blinking caret shown while the response types out. */
+    .caret {
+      display: inline-block;
+      width: 2px;
+      height: 1.05em;
+      vertical-align: text-bottom;
+      background: var(--gold-dark);
+      margin-left: 1px;
+      animation: blink 1s steps(2, start) infinite;
+    }
+
+    @keyframes blink { to { visibility: hidden; } }
 
     .button-group button {
       padding: 11px;
@@ -324,6 +338,33 @@
       }
     });
 
+    // Typewriter: streamed tokens land in `pending`; a steady timer reveals
+    // them so the pace looks like typing regardless of network chunking.
+    let pending = '';
+    let shown = '';
+    let typer = null;
+    let streamDone = false;
+
+    function escapeHtml(s) {
+      return s.replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+    }
+
+    function startTyping() {
+      const caret = '<span class="caret"></span>';
+      resultText.innerHTML = caret;
+      typer = setInterval(() => {
+        if (pending.length > 0) {
+          shown += pending.slice(0, 2);
+          pending = pending.slice(2);
+          resultText.innerHTML = escapeHtml(shown) + caret;
+        } else if (streamDone) {
+          clearInterval(typer);
+          typer = null;
+          resultText.textContent = shown;
+        }
+      }, 18);
+    }
+
     submitBtn.addEventListener('click', async () => {
       const text = inputText.value.trim();
 
@@ -338,25 +379,40 @@
       }
 
       submitBtn.disabled = true;
-      loadingDiv.style.display = 'block';
       errorDiv.classList.remove('show');
+      loadingDiv.style.display = 'block';
+      pending = ''; shown = ''; streamDone = false;
+      let started = false;
 
       try {
-        const response = await fetch('/api/transform', {
+        const response = await fetch('/transform-stream', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ text })
         });
 
         if (!response.ok) {
-          const error = await response.json();
+          const error = await response.json().catch(() => ({}));
           throw new Error(error.error || 'Failed to transform text');
         }
 
-        const data = await response.json();
-        resultText.textContent = data.transformed;
-        resultGroup.classList.add('show');
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          if (!started) {
+            started = true;
+            loadingDiv.style.display = 'none';
+            resultGroup.classList.add('show');
+            startTyping();
+          }
+          pending += decoder.decode(value, { stream: true });
+        }
+        streamDone = true;
       } catch (error) {
+        if (typer) { clearInterval(typer); typer = null; }
+        resultGroup.classList.remove('show');
         showError(error.message);
       } finally {
         submitBtn.disabled = false;
